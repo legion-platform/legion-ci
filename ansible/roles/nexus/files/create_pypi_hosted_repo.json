@@ -1,0 +1,5 @@
+{
+    "name": "create_pypi_hosted_repo",
+    "content": "repository.createPyPiHosted('pypi_hosted','default',true)",
+    "type": "groovy"
+  }

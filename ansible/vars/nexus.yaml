@@ -1,0 +1,11 @@
+---
+
+nexus_ec2_key_name: legion-cc
+nexus_ec2_image_id: ami-10547475
+nexus_ec2_instance_type: m4.large
+nexus_vpc_subnet: subnet-265cab4f
+nexus_vpc_zone: us-east-2a
+nexus_sg:
+  - epam-by-ru
+  - epam-europe
+nexus_url: nexus-server.cc.{{ r53_hosted_zone }}

@@ -1,0 +1,74 @@
+---
+
+- name: Create Nexus CC ec2 instance
+  ec2:
+    region: "{{ aws_region }}"
+    profile: "{{ aws_profile }}"
+    groups: "{{ nexus_sg }}"
+    keypair: "{{ nexus_ec2_key_name }}"
+    image: "{{ nexus_ec2_image_id }}"
+    instance_type: "{{ nexus_ec2_instance_type }}"
+    vpc_subnet_id: "{{ nexus_vpc_subnet }}"
+    zone: 
+    assign_public_ip: yes
+    monitoring: no
+    wait: yes
+    count: 1
+    id: legion-nexus-server
+    wait_timeout: 600
+    termination_protection: no
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: io1
+        iops: 100
+        volume_size: 10
+        delete_on_termination: true
+      - device_name: /dev/sdb
+        volume_type: io1
+        iops: 100
+        volume_size: 10
+        delete_on_termination: true
+    instance_tags:
+      Name: "legion-nexus-cc"
+      Project: "legion"
+  register: nexus
+
+- name: List Nexus instance details
+  debug: msg="{{ nexus }}"
+
+- name: Allocate elastic IP
+  ec2_eip:
+    profile: "{{ aws_profile }}"
+    in_vpc: yes
+    reuse_existing_ip_allowed: yes
+    state: present
+    region: "{{ aws_region }}"
+    instance_id: "{{ nexus.instance_ids[0] }}"
+  register: instance_eip
+- debug: var=instance_eip.public_ip
+
+- name: Wait for SSH to start
+  wait_for:
+    host: "{{ item }}"
+    port: 22
+    state: started
+  loop:
+    - "{{ instance_eip.public_ip }}"
+
+- name: Create SSH Group to login dynamically to Jenkins server
+  add_host:
+    hostname: "{{ item }}"
+    groupname: nexus-cc
+  loop:
+    - "{{ instance_eip.public_ip }}"
+
+- name: "Add  A record to the {{ r53_hosted_zone }} hosted zone"
+  route53:
+      state: present
+      zone: "{{ r53_hosted_zone }}"
+      record: "{{ nexus_url }}"
+      type: A
+      ttl: 600
+      value: "{{ instance_eip.public_ip }}"
+      wait: yes
+      overwrite: yes

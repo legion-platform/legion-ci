@@ -1,0 +1,15 @@
+nexus:
+  image: "{{ nexus_docker_image }}"
+  container_name: "{{ nexus_container_name }}"
+  ports:
+    - "9091:8081"
+    - "9092:10001"
+  environment:
+    JAVA_MIN_MEM: "1200M"
+    JAVA_MAX_MEM: "1200M"
+  ulimits:
+    nofile:
+      soft: 65536
+      hard: 65536
+  volumes:
+    - {{ nexus_home }}/data:/nexus-data

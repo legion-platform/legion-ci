@@ -1,0 +1,5 @@
+{
+    "name": "create_jenkins_plugins_raw_repo",
+    "content": "repository.createRawHosted('jenkins_plugins','default',true)",
+    "type": "groovy"
+  }

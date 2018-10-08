@@ -1,0 +1,16 @@
+nexus_default_store: /dev/xvdb
+nexus_pypi_store: /dev/xvdc
+nexus_docker_store: /dev/xvde
+
+nexus_home: /opt/nexus
+nexus_user: nexus
+nexus_group: nexus
+nexus_docker_compose_dest: {{ nexus_home }}
+
+nexus_cfg_files:
+  - create_jenkins_user
+  - create_main_jenkins_ci_user
+  - create_jenkins_plugins_raw_repo
+  - create_main_docker_repo
+  - create_models_raw_repo
+  - create_pypi_hosted_repo

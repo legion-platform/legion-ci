@@ -1,0 +1,97 @@
+- name: add group
+  group:
+    name: "{{ nexus_group }}"
+
+# Mount blob stores
+- name: Mount default blob store
+  mount:
+    path: "{{ nexus_default_store }}"
+    fstype: ext4
+    state: present
+
+#- name: Mount pypi blob store
+#  mount:
+#    path: {{ nexus_pypi_store }}
+#    fstype: ext4
+#    state: present
+
+#- name: Mount docker blob store
+#  mount:
+#    path: {{ nexus_docker_store }}
+#    fstype: ext4
+#    state: present
+ 
+- name: add user
+  user:
+    name: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    shell: /bin/bash
+    home: "{{ nexus_home }}"
+
+- name: copy docker compose file
+  template:
+    src: "docker-compose.yaml.j2"
+    dest: "{{ nexus_docker_compose_dest }}"
+
+- name: add nexus user to docker group
+  user:
+    name: nexus
+    groups: docker
+    append: yes
+
+- name: service restart
+  service:
+    name: docker
+    state: restarted
+
+- name: docker-compose up
+  shell:
+    cmd: docker-compose up -d
+    chdir: "{{ nexus_home }}"
+  
+
+- name: check port state
+  wait_for:
+    port: 9091
+    delay: 60
+    state: started
+
+- name: copy nexus cfg file
+  copy:
+    src: "{{ item }}.json"
+    dest: '/tmp/{{ item }}.json'
+  with_items:
+    "{{ nexus_cfg_files }}"
+  
+
+- name: add cfg files to nexus
+  shell:
+    cmd: "curl -u {{ nexus_login_user }}:{{ nexus_login_pass }} -X POST 
+          --header 'Content-Type: application/json' 
+          http://localhost:{{ nexus_port }}/service/rest/v1/script 
+          -d @/tmp/{{ item }}.json"
+  with_items:
+    "{{ nexus_cfg_files }}"
+  
+
+- name: exec nexus scripts
+  shell:
+    cmd: "curl -v -X POST -u {{ nexus_login_user }}:{{ nexus_login_pass }} 
+          --header 'Content-Type: text/plain' 
+          http://localhost:{{ nexus_port }}/service/rest/v1/script/{{ item }}/run"
+  with_items:
+    "{{ nexus_cfg_files }}"
+  
+
+- name: Ensure nexus scripts exist
+  stat:
+    path: "{{ tmp_dir }}/*.json"
+  register: nexus_scripts
+
+- name: remove nexus scripts
+  file:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    "{{ nexus_cfg_files }}.json"
+  when: nexus_scripts.stat.exists == True

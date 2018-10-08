@@ -1,0 +1,6 @@
+---
+
+aws_profile: "bdcc"
+vpc_id: vpc-5729c13e
+aws_region: us-east-2
+r53_hosted_zone: epm.kharlamov.biz
