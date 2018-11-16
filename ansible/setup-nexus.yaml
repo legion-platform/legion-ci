@@ -1,0 +1,10 @@
+- hosts: nexus-cc
+  become: yes
+  gather_facts: False
+
+  vars_files:
+    - vars/aws.yaml
+    - vars/nexus.yaml
+  
+  roles:
+    - nexus

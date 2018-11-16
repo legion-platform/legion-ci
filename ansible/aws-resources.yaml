@@ -1,0 +1,10 @@
+- hosts: localhost
+  become: yes
+  gather_facts: False
+
+  vars_files:
+    - vars/aws.yaml
+    - vars/nexus.yaml
+  
+  roles:
+    - aws
