@@ -15,7 +15,7 @@ pipeline {
     }
     environment {
         build_workspace = "${WORKSPACE}"
-        def dex_dockerimage = "k8s-dex"
+        dex_dockerimage = "k8s-dex"
         shared_lib_path = "deploy/legionPipeline.groovy"
         //parameters section
         //git branch to checkout 
