@@ -14,42 +14,44 @@ pipeline {
         disableConcurrentBuilds()
     }
     environment {
-        buildWorkspace = "${WORKSPACE}"
-        dexDockerimage = "k8s-dex"
-        sharedLibPath = "deploy/legionPipeline.groovy"
-        //parameters section
+        /// Input parameters
         //git branch to checkout 
         //Set main branch for Job SCM GitBranch
         //git branch to checkout legion
-        gitBranchLegion = "${params.GitBranchLegion}"
+        param_gitBranchLegion = "${params.GitBranchLegion}"
         //git branch to checkout dex dockerfile
-        gitBranchDex = "${params.GitBranchDex}"
+        param_gitBranchDex = "${params.GitBranchDex}"
         //Git repo - main organization repo
-        mainGitRepo = "${params.MainGitRepo}"
+        param_mainGitRepo = "${params.MainGitRepo}"
         //Enable slack notifications bolean parameter
-        slackNotifications = "${params.EnableSlackNotifications}"
+        param_slackNotifications = "${params.EnableSlackNotifications}"
         // Docker registry parameter
-        dockerRegistry = "${params.DockerRegistry}"
+        param_dockerRegistry = "${params.DockerRegistry}"
         //Enable docker cache parameter
-        enableDockerCache = "${params.EnableDockerCache}"
+        param_enableDockerCache = "${params.EnableDockerCache}"
         //Get dex version from parameter
-        dexVersion = "${params.DexVersion}"
+        param_dexVersion = "${params.DexVersion}"
         // Get version from parameter
-        legionVersion = "${params.LegionVersion}"
+        param_legionVersion = "${params.LegionVersion}"
+        ///Job parameters
+        buildWorkspace = "${WORKSPACE}"
+        dexDockerimage = "k8s-dex"
+        sharedLibPath = "deploy/legionPipeline.groovy"
+        
     }
     stages {
         stage('Checkout and set build vars') {
             steps {
                 dir ("${buildWorkspace}/dex") {
-                    checkout([$class: 'GitSCM', branches: [[name: "${gitBranchDex}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${mainGitRepo}/dex.git"]]])
+                    checkout([$class: 'GitSCM', branches: [[name: "${param_gitBranchDex}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${param_mainGitRepo}/dex.git"]]])
                 }
                 dir ("${buildWorkspace}/legion") {
-                    checkout([$class: 'GitSCM', branches: [[name: "${gitBranchLegion}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${mainGitRepo}/legion.git"]]])
+                    checkout([$class: 'GitSCM', branches: [[name: "${param_gitBranchLegion}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${param_mainGitRepo}/legion.git"]]])
                     script{
-                        Globals.dockerCacheArg = "${enableDockerCache}" ? '' : '--no-cache'
+                        Globals.dockerCacheArg = "${param_enableDockerCache}" ? '' : '--no-cache'
                         print("Check code for security issues")
                         sh "bash install-git-secrets-hook.sh install_hooks && git secrets --scan -r"
-                        Globals.dockerTag = "${dexVersion}-legion-${legionVersion}"
+                        Globals.dockerTag = "${param_dexVersion}-legion-${param_legionVersion}"
                     }
                 }
             }
@@ -57,17 +59,17 @@ pipeline {
         stage('Build docker image Dex') {
             steps {
                 dir ("${buildWorkspace}/dex") {
-                    sh "docker build ${Globals.dockerCacheArg} -t ${dockerRegistry}/${dexDockerimage}:${BUILD_NUMBER} -f Dockerfile ."
+                    sh "docker build ${Globals.dockerCacheArg} -t ${param_dockerRegistry}/${dexDockerimage}:${BUILD_NUMBER} -f Dockerfile ."
                 }
             }
         }
         stage('Push docker image Dex') {
             steps {
                 sh """
-                docker tag ${dockerRegistry}/${dexDockerimage}:${BUILD_NUMBER} ${dockerRegistry}/${dexDockerimage}:latest
-                docker tag ${dockerRegistry}/${dexDockerimage}:${BUILD_NUMBER} ${dockerRegistry}/${dexDockerimage}:${Globals.dockerTag}
-                docker push ${dockerRegistry}/${dexDockerimage}:${Globals.dockerTag}
-                docker push ${dockerRegistry}/${dexDockerimage}:latest
+                docker tag ${param_dockerRegistry}/${dexDockerimage}:${BUILD_NUMBER} ${param_dockerRegistry}/${dexDockerimage}:latest
+                docker tag ${param_dockerRegistry}/${dexDockerimage}:${BUILD_NUMBER} ${param_dockerRegistry}/${dexDockerimage}:${Globals.dockerTag}
+                docker push ${param_dockerRegistry}/${dexDockerimage}:${Globals.dockerTag}
+                docker push ${param_dockerRegistry}/${dexDockerimage}:latest
                 """
             }
         }
