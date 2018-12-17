@@ -1,0 +1,10 @@
+jenkins_user: jenkins
+jenkins_group: jenkins
+jenkins_home_dir: "{{ base_directory }}/jenkins"
+jenkins_plugins_dir: "{{ jenkins_home_dir }}/.jenkins/plugins"
+jenkins_war_url: http://mirrors.jenkins.io/war-stable/latest/jenkins.war
+jenkins_was_dest: "{{ jenkins_home_dir }}/jenkins.war"
+jenkins_listen_address: 127.0.0.1
+jenkins_listen_port: 8080
+jenkins_service_name: jenkins
+jenkins_systemd_service: /etc/systemd/system/jenkins.service

@@ -1,0 +1,42 @@
+---
+
+- name: add apt repository
+  apt_repository:
+    repo: "{{ docker_apt_repo }}"
+    state: present
+
+
+- name: add apt signing key from url
+  apt_key:
+    url: "{{ docker_apt_key_url }}"
+    state: present
+
+
+- name: add apt key by id
+  apt_key:
+    keyserver: "{{ docker_keyserver_url }}"
+    id: "{{ docker_apt_key_id }}"
+
+
+- name: install docker
+  apt:
+    name: docker-ce
+    update_cache: yes
+
+
+- name: create home directory - "{{ docker_home }}"
+  file:
+    path: "{{ docker_home }}"
+    state: directory
+
+
+- name: change root dir
+  template:
+    src: "daemon.json.j2"
+    dest: "/etc/docker/deamon.json"
+
+
+- name: service restart
+  service:
+    name: docker
+    state: restarted

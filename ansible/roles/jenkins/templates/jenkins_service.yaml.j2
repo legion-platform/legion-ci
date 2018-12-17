@@ -1,0 +1,9 @@
+[Unit]
+Description=Jenkins Daemon
+
+[Service]
+ExecStart=/usr/bin/java -jar {{ jenkins_war_dest }} --httpListenAddress={{ jenkins_listen_address }}
+User={{ jenkins_user }}
+
+[Install]
+WantedBy=multi-user.target

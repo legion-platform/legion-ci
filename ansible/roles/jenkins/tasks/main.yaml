@@ -1,0 +1,92 @@
+---
+
+- name: add group
+  group:
+    name: "{{ jenkins_group }}"
+
+
+- name: add user
+  user:
+    name: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+    shell: /bin/bash
+    home: "{{ jenkins_home_dir }}"
+
+
+- name: create home directory
+  file:
+    path: "{{ jenkins_home_dir }}"
+    state: directory
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+
+
+- name: download jenkins.war file
+  get_url:
+    url: "{{ jenkins_war_url }}"
+    dest: "{{ jenkins_war_dest }}"
+
+
+- name: create systemd service template
+  template:
+    src: jenkins_service.yaml.j2
+    dest: "{{ jenkins_systemd_service }}"
+
+
+- name: start and enable service
+  service:
+    name: "{{ jenkins_service_name }}"
+    enabled: yes
+    state: started
+
+
+- name: check port state
+  wait_for:
+    host: "{{ jenkins_listen_address }}"
+    port: "{{ jenkins_listen_port }}"
+    delay: 15
+    state: started
+
+- name: copy plugins list file
+  copy:
+    src: plugins.txt
+    dest: "{{ tmp_dir }}/plugins.txt"
+
+
+- name: copy plugins install script 
+  copy:
+    src: install_plugins.sh
+    dest: "{{ tmp_dir }}/install_plugins.sh"
+    mode: u+rwx,g+rwx,o+rwx
+
+
+- name: clean plugins directory
+  file:
+    state: absent
+    path: "{{ jenkins_plugins_dir}}"
+
+
+- name: create plugins directory
+  file:
+    state: directory
+    path: "{{ jenkins_plugins_dir}}"
+
+
+- name: install plugins
+  shell:
+    cmd: "./install_plugins.sh < plugins.txt"
+    chdir: "{{ tmp_dir }}"
+
+
+- name: change directory owner
+  file:
+    path: "{{ jenkins_home_dir }}"
+    owner: "{{ jenkins_user }}"
+    group: "{{ jenkins_group }}"
+    recurse: yes
+
+
+- name: restart service
+  service:
+    name: "{{ jenkins_service_name }}"
+    state: restarted

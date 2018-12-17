@@ -1,0 +1,22 @@
+system_packages:
+  - openjdk-8-jdk
+  - maven
+  - python-pip
+  - git
+  - unzip
+
+python_packages:
+  - pip==9.0.3
+  - docker-compose
+  - awscli
+  - boto
+  - boto3
+  - cffi
+  - PyYAML
+  - Sphinx==1.6.4
+  - sphinx-autobuild==0.7.1
+  - sphinx-rtd-theme==0.2.4
+  - sphinxcontrib-websupport==1.0.1
+  - virtualenv==16.0.0
+  - yq
+  - recommonmark==0.4.0

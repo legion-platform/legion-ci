@@ -1,0 +1,29 @@
+root = "{{ docker_home }}/containerd/daemon"
+state = "/var/run/docker/containerd/daemon"
+no_subreaper = false
+oom_score = -500
+
+[grpc]
+  address = "/var/run/docker/containerd/docker-containerd.sock"
+  uid = 0
+  gid = 0
+
+[debug]
+  address = "/var/run/docker/containerd/docker-containerd-debug.sock"
+  uid = 0
+  gid = 0
+  level = "info"
+
+[metrics]
+  address = ""
+
+[cgroup]
+  path = ""
+
+[plugins]
+  [plugins.linux]
+    shim = "docker-containerd-shim"
+    runtime = "docker-runc"
+    runtime_root = "{{ docker_home }}/runc"
+    no_shim = false
+    shim_debug = false

@@ -1,0 +1,5 @@
+docker_apt_repo: "deb https://download.docker.com/linux/ubuntu xenial stable"
+docker_apt_key_url: "https://download.docker.com/linux/ubuntu/gpg"
+docker_home: "/opt/data/docker"
+docker_keyserver_url: keyserver.ubuntu.com
+docker_apt_key_id: 7EA0A9C3F273FCD8

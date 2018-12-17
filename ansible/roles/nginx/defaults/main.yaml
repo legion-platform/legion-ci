@@ -1,0 +1,8 @@
+nginx_apt_repo: "deb http://nginx.org/packages/ubuntu/ xenial nginx"
+nginx_apt_src_repo: "deb-src http://nginx.org/packages/ubuntu/ xenial nginx"
+nginx_repo_key_id: "ABF5BD827BD9BF62"
+nginx_keyserver_url: "keyserver.ubuntu.com"
+nginx_tls_crt: nginx.crt
+nginx_tls_key: nginx.key
+nginx_home: /etc/nginx
+nginx_cfg_dest: /etc/nginx/conf.d/default.conf
