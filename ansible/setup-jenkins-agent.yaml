@@ -1,0 +1,10 @@
+- hosts: jenkins-agent
+  become: yes
+  gather_facts: False
+
+  vars_files:
+    - vars/jenkins.yaml
+  
+  roles:
+    - system
+    - docker
