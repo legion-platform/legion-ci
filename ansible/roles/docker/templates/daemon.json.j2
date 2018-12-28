@@ -1,3 +1,11 @@
 {
-    "graph": "{{ docker_home }}"
+
+  "insecure-registries": [
+    "{{ docker_local_registry }}:80",
+    "{{ docker_local_registry }}:443"
+  ],
+
+  "disable-legacy-registry": true,
+  "registry-mirrors": ["https://{{ docker_local_registry }}:8083"],
+
 }

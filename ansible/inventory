@@ -2,4 +2,4 @@
 nexus-server.cc.epm.kharlamov.biz
 
 [jenkins-agents]
-jenkins-agent ansible_ssh_private_key_file=/tmp/legion-jenkins-agent.pem ansible_user=ubuntu ansible_ssh_host=jenkins-agent.epm.kharlamov.biz
+jenkins-agent ansible_ssh_private_key_file=/tmp/legion-jenkins-agent.pem ansible_user=ubuntu ansible_ssh_host=3.16.203.241

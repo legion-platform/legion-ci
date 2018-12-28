@@ -5,14 +5,20 @@
   with_items:
     "{{ system_packages }}"
 
-
 - name: install python packages
   command: pip install -U {{ item }}
   with_items:
     "{{ python_packages }}"
 
-
 - name: create home directory - "{{ base_directory }}"
   file:
     path: "{{ base_directory }}"
     state: directory
+
+- name: install git-secrets utility
+  becomme: true
+  get_url:
+    url: "{{ git_secrets_url }}"
+    dest: /usr/bin/
+    mode: 0755
+  
