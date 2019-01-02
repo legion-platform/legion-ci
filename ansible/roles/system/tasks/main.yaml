@@ -16,7 +16,7 @@
     state: directory
 
 - name: install git-secrets utility
-  becomme: true
+  become: true
   get_url:
     url: "{{ git_secrets_url }}"
     dest: /usr/bin/

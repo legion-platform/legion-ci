@@ -1,4 +1,5 @@
 system_packages:
+  - htop
   - openjdk-8-jdk
   - maven
   - python-pip
