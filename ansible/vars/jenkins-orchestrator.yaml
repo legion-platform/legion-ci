@@ -6,3 +6,4 @@ git_secrets_url: "https://raw.githubusercontent.com/awslabs/git-secrets/{{ git_s
 docker_local_registry: nexus-local.cc.epm.kharlamov.biz
 docker_userns_remap: true
 docker_remap_user: ubuntu
+docker_nexus_mirror: false

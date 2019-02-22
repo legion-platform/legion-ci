@@ -6,3 +6,4 @@ docker_apt_key_id: 7EA0A9C3F273FCD8
 docker_version: 5:18.09.0~3-0~ubuntu-xenial
 docker_userns_remap: false
 docker_remap_user: ubuntu
+docker_nexus_mirror: false

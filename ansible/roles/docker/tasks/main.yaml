@@ -55,6 +55,7 @@
     - /etc/subgid
   notify:
     - restart docker
+  when: docker_userns_remap == true
 
 - name: add userns uid remap rule
   lineinfile:
@@ -67,3 +68,4 @@
     - /etc/subgid
   notify:
     - restart docker
+  when: docker_userns_remap == true

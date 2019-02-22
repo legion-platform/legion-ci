@@ -1,0 +1,11 @@
+- hosts: jenkins-builder
+  become: yes
+  gather_facts: False
+
+  vars_files:
+    - vars/jenkins-builder.yaml
+
+  roles:
+    - system
+    - docker
+    - helm

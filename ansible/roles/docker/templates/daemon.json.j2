@@ -5,8 +5,8 @@
     "{{ docker_local_registry }}:443"
   ],
 
-  "disable-legacy-registry": true,
-  "registry-mirrors": ["https://{{ docker_local_registry }}:8083"]{% if docker_userns_remap == true %},
+  "disable-legacy-registry": true{% if docker_nexus_mirror == true %},
+  "registry-mirrors": ["https://{{ docker_local_registry }}:8083"] {% endif %}{% if docker_userns_remap == true %},
   "userns-remap": "{{ docker_remap_user }}"
   {% endif %}
 
