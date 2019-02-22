@@ -85,7 +85,6 @@
     group: "{{ jenkins_group }}"
     recurse: yes
 
-
 - name: restart service
   service:
     name: "{{ jenkins_service_name }}"

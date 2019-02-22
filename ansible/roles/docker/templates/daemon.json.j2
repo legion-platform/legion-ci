@@ -6,6 +6,8 @@
   ],
 
   "disable-legacy-registry": true,
-  "registry-mirrors": ["https://{{ docker_local_registry }}:8083"],
+  "registry-mirrors": ["https://{{ docker_local_registry }}:8083"]{% if docker_userns_remap == true %},
+  "userns-remap": "{{ docker_remap_user }}"
+  {% endif %}
 
 }

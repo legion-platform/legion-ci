@@ -4,4 +4,5 @@ base_directory: /opt/jenkins
 git_secrets_version: 1.2.1
 git_secrets_url: "https://raw.githubusercontent.com/awslabs/git-secrets/{{ git_secrets_version }}/git-secrets"
 docker_local_registry: nexus-local.cc.epm.kharlamov.biz
-
+docker_userns_remap: true
+docker_remap_user: ubuntu

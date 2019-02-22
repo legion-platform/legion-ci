@@ -30,7 +30,7 @@
 - name: update config
   template:
     src: "daemon.json.j2"
-    dest: "/etc/docker/deamon.json"
+    dest: "/etc/docker/daemon.json"
   notify:
     - restart docker
 
@@ -44,3 +44,26 @@
     name: ubuntu
     groups: docker
     append: yes
+
+- name: add userns uid remap rule
+  lineinfile:
+    path: "{{ item }}"
+    regexp: "^{{ docker_remap_user }}:165536"
+    line: "{{ docker_remap_user }}:165536:65536"
+  loop:
+    - /etc/subuid
+    - /etc/subgid
+  notify:
+    - restart docker
+
+- name: add userns uid remap rule
+  lineinfile:
+    path: "{{ item }}"
+    regexp: "^{{ docker_remap_user }}:1000"
+    line: "{{ docker_remap_user }}:1000:1"
+    insertbefore: "{{ docker_remap_user }}:165536:65536"
+  loop:
+    - /etc/subuid
+    - /etc/subgid
+  notify:
+    - restart docker
